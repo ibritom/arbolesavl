@@ -20,7 +20,7 @@ public class AVLTreePruebas
         tree.insert(10);
         tree.insert(20);
         tree.insert(30);
-        Assert.AreEqual(-1, tree.getBalace(tree.root));
+        Assert.AreEqual(0, tree.getBalace(tree.root));
     }
     [TestMethod]
     public void rightRotatePruebas()
@@ -57,5 +57,25 @@ public class AVLTreePruebas
         tree.insert(20);
         tree.insert(30);
         Assert.AreEqual(20, tree.root.Value);
+    }
+    [TestMethod]
+    public void deletePruebas()
+    {
+        AVLTree tree = new AVLTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(30);
+        tree.delete(20);
+        Assert.AreEqual(30, tree.root.Value);
+    }
+    [TestMethod]
+    public void deleteRecursivePruebas()
+    {
+        AVLTree tree = new AVLTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(30);
+        tree.delete(20);
+        Assert.AreEqual(30, tree.root.Value);
     }
 }

@@ -20,7 +20,7 @@ namespace arbolesavl
         {
             if (node == null)
                 return 0;
-            return height(node.Right) - height(node.Left);
+            return height(node.Left) - height(node.Right);
         }
         private AVLNode rightRotate(AVLNode y)
         {
@@ -89,7 +89,81 @@ namespace arbolesavl
             // Return the (unchanged) node pointer
             return node;
         }
+        public AVLNode delete(int value)
+        {
+            root = deleteRecursive(root, value);
+            return root;
+        }
+        public AVLNode deleteRecursive(AVLNode root, int value) {
+            // STEP 1: PERFORM STANDARD BST DELETE
+            if (root == null)
+                return root;
+            if (value < root.Value)
+                root.Left = deleteRecursive(root.Left, value);
+            else if (value > root.Value)
+                root.Right = deleteRecursive(root.Right, value);
+            else
+            {
+                // node with only one child or no child
+                if ((root.Left == null) || (root.Right == null))
+                {
+                    AVLNode temp = root.Left != null ? root.Left : root.Right;
+                    // No child case
+                    if (temp == null)
+                    {
+                        temp = root;
+                        root = null;
+                    }
+                    else
+                        root = temp; // One child case
+                }
+                else
+                {
+                    // node with two children: Get the inorder successor (smallest in the right subtree)
+                    AVLNode temp = minValueNode(root.Right);
+                    // Copy the inorder successor's content to this node
+                    root.Value = temp.Value;
+                    // Delete the inorder successor
+                    root.Right = deleteRecursive(root.Right, temp.Value);
+                }
+            }
+            // If the tree had only one node then return
+            if (root == null)
+                return root;
+            // STEP 2: UPDATE HEIGHT OF THIS ANCESTOR NODE
+            root.Height = Math.Max(height(root.Left), height(root.Right)) + 1;
+            // STEP 3: GET THE BALANCE FACTOR OF THIS ANCESTOR NODE TO CHECK WHETHER THIS NODE BECAME UNBALANCED
+            int balance = getBalace(root);
+            // If this node becomes unbalanced, then there are 4 cases
+            // Left Left Case
+            if (balance > 1 && getBalace(root.Left) >= 0)
+                return rightRotate(root);
+            // Left Right Case
+            if (balance > 1 && getBalace(root.Left) < 0)
+            {
+                root.Left = leftRotate(root.Left);
+                return rightRotate(root);
+            }
+            // Right Right Case
+            if (balance < -1 && getBalace(root.Right) <= 0)
+                return leftRotate(root);
+            // Right Left Case
+            if (balance < -1 && getBalace(root.Right) > 0)
+            {
+                root.Right = rightRotate(root.Right);
+                return leftRotate(root);
+            }
+            return root;
 
 
+        }
+        public AVLNode minValueNode(AVLNode node)
+        {
+            AVLNode current = node;
+            // loop down to find the leftmost leaf
+            while (current.Left != null)
+                current = current.Left;
+            return current;
+        }
     }
 }
